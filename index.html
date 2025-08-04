@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Galeri Media</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f9f9f9;
+      margin: 0;
+      padding: 20px;
+      text-align: center;
+    }
+
+    h1 {
+      color: #333;
+      margin-bottom: 30px;
+    }
+
+    .gallery {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+    }
+
+    .gallery img,
+    .gallery video {
+      width: 250px;
+      max-height: 200px;
+      object-fit: cover;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease;
+    }
+
+    .gallery img:hover,
+    .gallery video:hover {
+      transform: scale(1.05);
+    }
+
+    footer {
+      margin-top: 50px;
+      color: #777;
+    }
+  </style>
+</head>
+<body>
+  <h1>Galeri Media Saya</h1>
+  <div class="gallery" id="gallery"></div>
+
+  <footer>
+    &copy; 2025 Galeri Media. Dibuat dengan ❤️.
+  </footer>
+
+  <script>
+    const mediaFolder = 'media/';
+    const mediaListFile = 'media.txt';
+
+    const imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+    const videoExtensions = ['mp4', 'webm', 'ogg'];
+
+    const gallery = document.getElementById('gallery');
+
+    fetch(mediaListFile)
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Gagal memuat media.txt');
+        }
+        return response.text();
+      })
+      .then(text => {
+        const files = text.split('\n').map(f => f.trim()).filter(f => f.length > 0);
+
+        files.forEach(file => {
+          const ext = file.split('.').pop().toLowerCase();
+          const fullPath = mediaFolder + file;
+
+          if (imageExtensions.includes(ext)) {
+            const img = document.createElement('img');
+            img.src = fullPath;
+            img.alt = file;
+            gallery.appendChild(img);
+          } else if (videoExtensions.includes(ext)) {
+            const video = document.createElement('video');
+            video.src = fullPath;
+            video.controls = true;
+            gallery.appendChild(video);
+          }
+        });
+      })
+      .catch(error => {
+        gallery.innerHTML = `<p style="color:red;">${error.message}</p>`;
+      });
+  </script>
+</body>
+  </html>
